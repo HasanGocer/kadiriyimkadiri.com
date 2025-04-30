@@ -1,0 +1,82 @@
+USE kadiriyim_db;
+
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numara VARCHAR(255) NOT NULL,
+    isim VARCHAR(255) NOT NULL,
+    soyisim VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT FALSE,
+    is_admin BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE Ziyaretler (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    isim VARCHAR(255) NOT NULL,
+    aktiflik BOOLEAN NOT NULL DEFAULT TRUE,
+    user_id VARCHAR(255) NOT NULL,
+    siralama INT NOT NULL,
+    olusturma_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    hediye_tipi_id INT, 
+    FOREIGN KEY (hediye_tipi_id) REFERENCES HediyeTipleri(id) ON DELETE SET NULL
+);
+CREATE TABLE Hediyeler (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    isim VARCHAR(255) NOT NULL,
+    modCount INT NOT NULL DEFAULT 0,
+    aktiflik BOOLEAN NOT NULL DEFAULT TRUE,
+    user_id VARCHAR(255) NOT NULL,
+    siralama INT NOT NULL,
+    olusturma_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE HediyeTipleri (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    isim VARCHAR(255) NOT NULL
+);
+CREATE TABLE HediyeTipDetay (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    hediye_id INT NOT NULL,
+    hediye_tipi_id INT NOT NULL,
+    FOREIGN KEY (hediye_id) REFERENCES Hediyeler(id) ON DELETE CASCADE,
+    FOREIGN KEY (hediye_tipi_id) REFERENCES HediyeTipleri(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS hediye (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    ziyaretler_id INT NOT NULL,
+    hediyeler_id INT NOT NULL,
+    sayi INT NOT NULL,
+    status ENUM('beklemede', 'onaylandı', 'reddedildi') NOT NULL DEFAULT 'onaylandı',
+    olusturma_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Foreign Key Tanımlamaları
+    FOREIGN KEY (ziyaretler_id) REFERENCES Ziyaretler(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (hediyeler_id) REFERENCES Hediyeler(id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+CREATE TABLE postType (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    isim VARCHAR(255) NOT NULL
+);
+CREATE TABLE posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    post_type_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    content TEXT,
+    is_published BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (post_type_id) REFERENCES postType(id) ON DELETE CASCADE -- veya RESTRICT
+);
+CREATE TABLE media (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    media_url VARCHAR(1024) NOT NULL,
+    media_type ENUM('image', 'video', 'audio') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+);
+
+
