@@ -36,10 +36,6 @@ app.get("*", (req, res) => {
   res.sendFile(join(__dirname, "build", "index.html"));
 });
 
-// ✅ Socket.IO kurulumu
-const httpServer = createServer(app);
-
-// Sunucuyu başlat
-httpServer.listen(port, () => {
-  console.log(`✅ Sunucu ${port} portunda çalışıyor...`);
+const server = app.listen(port, () => {
+  console.log(`✅ Server running on port ${port}`);
 });
