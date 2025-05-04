@@ -1,6 +1,5 @@
 import mysql from "mysql2/promise"; // mysql2/promise modülünü dahil ettik
 
-dotenv.config();
 
 // MySQL veritabanı bağlantısı
 const db = mysql.createPool({
