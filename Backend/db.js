@@ -12,7 +12,6 @@ const db = mysql.createPool({
   port: process.env.DB_PORT || 3306,
 });
 
-// Veritabanı bağlantısını kontrol etme (isteğe bağlı)
 db.getConnection()
   .then((connection) => {
     console.log("Veritabanına başarıyla bağlanıldı.");
