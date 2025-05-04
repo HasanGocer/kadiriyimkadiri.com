@@ -87,3 +87,5 @@ sudo systemctl restart mariadb
 sudo systemctl restart httpd
 pm2 restart myapp
 
+
+pm2 logs 

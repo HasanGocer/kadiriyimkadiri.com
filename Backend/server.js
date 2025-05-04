@@ -26,14 +26,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(join(__dirname, "uploads")));
 
 // ✅ React build klasörünü servis et
-app.use(express.static(join(__dirname, "frontend", "build")));
+app.use(express.static(join(__dirname, "build")));
 
 // ✅ API route'ları
 app.use("/api", routes);
 
 // ✅ SPA fallback — React Router için
 app.get("*", (req, res) => {
-  res.sendFile(join(__dirname, "frontend", "build", "index.html"));
+  res.sendFile(join(__dirname, "build", "index.html"));
 });
 
 // ✅ Socket.IO kurulumu
