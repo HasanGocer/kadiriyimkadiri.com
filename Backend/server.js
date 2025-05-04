@@ -1,21 +1,24 @@
-import "dotenv/config";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import routes from "./routes/index.route.js";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { createServer } from "http";
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = 5000;
 
 // __dirname tanımı
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // CORS (her yerden istek kabul et — geliştirme için uygun)
-app.use(cors());
+app.use(cors({
+  origin: "185.48.180.206",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  credentials: true,
+}));
 
 // JSON veri yakalama
 app.use(bodyParser.json());
