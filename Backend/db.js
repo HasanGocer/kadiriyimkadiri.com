@@ -4,7 +4,7 @@ dotenv.config();
 
 // MySQL veritabanı bağlantısı
 const db = mysql.createPool({
-  host: "localhost",
+  host: "185.48.180.206",
   user: "evpuser",
   password: "YeniSifren123!",
   database: "kadiriyim_db",
