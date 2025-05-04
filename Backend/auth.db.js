@@ -1,7 +1,7 @@
 import mysql from "mysql2";
 
 const db = mysql.createConnection({
-  host: "185.48.180.206", // veya kullanılan veritabanı sunucusu
+  host: "localhost", // veya kullanılan veritabanı sunucusu
   user: "evpuser",
   password: "YeniSifren123!", // veritabanı şifrenizi buraya yazın
   database: "kadiriyim_db", // veritabanı ismini buraya yazın
