@@ -6,8 +6,6 @@ import routes from "./routes/index.route.js";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { createServer } from "http";
-import { Server } from "socket.io";
-import { handleSocketIO } from "./socket/socket.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -40,10 +38,6 @@ app.get("*", (req, res) => {
 
 // ✅ Socket.IO kurulumu
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: { origin: "*", methods: ["GET", "POST"] }, // local için herkese açık
-});
-handleSocketIO(io);
 
 // Sunucuyu başlat
 httpServer.listen(port, () => {
