@@ -80,3 +80,10 @@ CREATE TABLE media (
 );
 
 
+cd kadiriyimkadiri.com/Backend
+git pull origin main
+
+sudo systemctl restart mariadb
+sudo systemctl restart httpd
+pm2 restart myapp
+
