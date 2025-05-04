@@ -3,7 +3,7 @@ import mysql from "mysql2";
 const db = mysql.createConnection({
   host: "localhost", // veya kullanılan veritabanı sunucusu
   user: "evpuser",
-  password: "güçlüşifre", // veritabanı şifrenizi buraya yazın
+  password: "YeniSifren123!", // veritabanı şifrenizi buraya yazın
   database: "kadiriyim_db", // veritabanı ismini buraya yazın
 });
 

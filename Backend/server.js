@@ -1,30 +1,51 @@
+import "dotenv/config";
 import express from "express";
-import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
-import path from "path";
+import routes from "./routes/index.route.js";
 import { fileURLToPath } from "url";
-import index from "./routes/index.route.js";
-
-// __dirname tanımı (ESM için)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-dotenv.config();
+import { dirname, join } from "path";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import { handleSocketIO } from "./socket/socket.js";
 
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const port = process.env.PORT || 5000;
+
+// __dirname tanımı
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// CORS (her yerden istek kabul et — geliştirme için uygun)
 app.use(cors());
 
-// ✅ Uploads klasörünü dışarı aç
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// JSON veri yakalama
+app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// ✅ API router'ı
-app.use("/api", index);
+// Yüklenen dosyaları açığa çıkar (resim/video vs.)
+app.use("/uploads", express.static(join(__dirname, "uploads")));
 
-// Sunucuyu başlatma
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Sunucu ${PORT} portunda çalışıyor...`);
+// ✅ React build klasörünü servis et
+app.use(express.static(join(__dirname, "frontend", "build")));
+
+// ✅ API route'ları
+app.use("/api", routes);
+
+// ✅ SPA fallback — React Router için
+app.get("*", (req, res) => {
+  res.sendFile(join(__dirname, "frontend", "build", "index.html"));
+});
+
+// ✅ Socket.IO kurulumu
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: { origin: "*", methods: ["GET", "POST"] }, // local için herkese açık
+});
+handleSocketIO(io);
+
+// Sunucuyu başlat
+httpServer.listen(port, () => {
+  console.log(`✅ Sunucu ${port} portunda çalışıyor...`);
 });

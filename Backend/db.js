@@ -7,7 +7,7 @@ dotenv.config();
 const db = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "evpuser",
-  password: process.env.DB_PASSWORD || "güçlüşifre",
+  password: process.env.DB_PASSWORD || "YeniSifren123!",
   database: process.env.DB_NAME || "kadiriyim_db",
   port: process.env.DB_PORT || 3306,
 });
