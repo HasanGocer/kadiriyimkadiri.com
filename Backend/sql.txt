@@ -8,7 +8,7 @@ CREATE TABLE users (
     soyisim VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     is_active BOOLEAN DEFAULT FALSE,
-    is_admin BOOLEAN DEFAULT FALSE,
+    user_type ENUM('ihvan', 'moderator', 'admin') DEFAULT 'ihvan',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE Ziyaretler (

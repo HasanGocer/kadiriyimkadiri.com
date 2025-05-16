@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import db from "../auth.db.js"; // Veritabanı bağlantısı
+import { verifyAdmin } from "../middlewares/verifyAdmin.js";
 
 const router = express.Router();
 const JWT_SECRET = "your_secret_key"; // Güvenli bir yerde sakla!
@@ -50,32 +51,12 @@ router.post("/login", (req, res) => {
 
       // JWT Token oluştur
       const token = jwt.sign(
-        { id: user.id, is_admin: user.is_admin },
+        { id: user.id, user_type: user.user_type },
         JWT_SECRET,
         { expiresIn: "1h" }
       );
 
       res.json({ message: "Giriş başarılı", token, user });
-    });
-  });
-});
-router.post("/activate/:id", (req, res) => {
-  const { id } = req.params;
-  const token = req.headers.authorization?.split(" ")[1];
-
-  // Token Doğrulama
-  if (!token) return res.status(403).json({ message: "Token gerekli" });
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: "Geçersiz token" });
-    if (!user.is_admin)
-      return res.status(403).json({ message: "Yetkiniz yok" });
-
-    // Kullanıcıyı Aktif Etme
-    const query = "UPDATE users SET is_active = 1 WHERE id = ?";
-    db.execute(query, [id], (err, result) => {
-      if (err) return res.status(500).json({ message: "Veritabanı hatası" });
-      res.json({ message: "Kullanıcı aktifleştirildi" });
     });
   });
 });
@@ -96,14 +77,14 @@ router.get("/users/:id", (req, res) => {
     res.json(results[0]);
   });
 });
-router.get("/", (req, res) => {
+router.get("/", verifyAdmin, (req, res) => {
   const query = "SELECT * FROM users";
   db.query(query, (err, results) => {
     if (err) return res.status(500).json({ error: err });
     res.status(200).json(results);
   });
 });
-router.put("/active/:id", (req, res) => {
+router.put("/active/:id", verifyAdmin, (req, res) => {
   const userId = req.params.id;
   const { is_active } = req.body;
 
@@ -113,14 +94,18 @@ router.put("/active/:id", (req, res) => {
     res.status(200).json({ message: "is_active updated successfully" });
   });
 });
-router.put("/admin/:id", (req, res) => {
+router.put("/usertype/:id", verifyAdmin, (req, res) => {
   const userId = req.params.id;
-  const { is_admin } = req.body;
+  const { user_type } = req.body;
 
-  const query = "UPDATE users SET is_admin = ? WHERE id = ?";
-  db.query(query, [is_admin, userId], (err, result) => {
+  if (!['ihvan', 'moderator', 'admin'].includes(user_type)) {
+    return res.status(400).json({ message: "Geçersiz user_type değeri" });
+  }
+
+  const query = "UPDATE users SET user_type = ? WHERE id = ?";
+  db.execute(query, [user_type, userId], (err, result) => {
     if (err) return res.status(500).json({ error: err });
-    res.status(200).json({ message: "is_admin updated successfully" });
+    res.status(200).json({ message: "user_type başarıyla güncellendi" });
   });
 });
 
