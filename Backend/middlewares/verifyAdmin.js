@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import db from "../db.js"; // DB bağlantını buradan çekiyorsan
+import db from "../auth.db.js"; // DB bağlantını buradan çekiyorsan
 
 export const verifyAdmin = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
